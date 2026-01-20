@@ -97,97 +97,96 @@ const BackgroundGeometry = () => {
   );
 };
 
-// --- Dynamic Project Components ---
+// --- Dynamic Activity Components ---
 
-interface Project {
+interface Assignment {
   id: string;
   title: string;
-  type: string;
-  tech: string;
-  image: string;
+  videoUrl: string;
+  description: string;
+  inference: string;
 }
 
-const AddProjectModal = ({
+const AddAssignmentModal = ({
   isOpen,
   onClose,
   onAdd
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (project: Omit<Project, 'id'>) => void;
+  onAdd: (assignment: Omit<Assignment, 'id'>) => void;
 }) => {
-  const [formData, setFormData] = useState({ title: '', type: '', tech: '', image: '' });
+  const [formData, setFormData] = useState({ title: '', videoUrl: '', description: '', inference: '' });
 
   if (!isOpen) return null;
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, image: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onAdd(formData);
-    setFormData({ title: '', type: '', tech: '', image: '' });
+    setFormData({ title: '', videoUrl: '', description: '', inference: '' });
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto">
-      <div className="bg-zinc-900 border border-white/10 p-8 rounded-2xl w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-white">
-          <X className="w-5 h-5" />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto p-4">
+      <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
+        >
+          <X className="w-6 h-6" />
         </button>
-        <h3 className="text-xl font-bold doto-font uppercase mb-6 text-white">Add New Project</h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <h3 className="text-2xl font-bold doto-font uppercase mb-6 text-white">Add Assignment</h3>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-xs mono-font uppercase text-zinc-500 mb-1">Project Title</label>
-            <input
-              required
-              className="w-full bg-black/50 border border-white/10 rounded-md p-2 text-white text-sm focus:border-[#FF2D2D] outline-none transition-colors"
-              value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-xs mono-font uppercase text-zinc-500 mb-1">Type / Category</label>
-            <input
-              required
-              className="w-full bg-black/50 border border-white/10 rounded-md p-2 text-white text-sm focus:border-[#FF2D2D] outline-none transition-colors"
-              value={formData.type}
-              onChange={e => setFormData({ ...formData, type: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-xs mono-font uppercase text-zinc-500 mb-1">Tech Stack</label>
-            <input
-              required
-              className="w-full bg-black/50 border border-white/10 rounded-md p-2 text-white text-sm focus:border-[#FF2D2D] outline-none transition-colors"
-              value={formData.tech}
-              onChange={e => setFormData({ ...formData, tech: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-xs mono-font uppercase text-zinc-500 mb-1">Project Image</label>
-            <div className="flex items-center gap-4">
-              <label className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-md hover:bg-white/10 transition-colors">
-                <Upload className="w-4 h-4 text-[#FF2D2D]" />
-                <span className="text-xs text-zinc-300">Upload Image</span>
-                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-              </label>
-              {formData.image && <span className="text-xs text-green-500">Image Loaded!</span>}
+            <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2">Details</label>
+            <div className="grid grid-cols-1 gap-4">
+              <input
+                required
+                placeholder="Title"
+                value={formData.title}
+                onChange={e => setFormData({ ...formData, title: e.target.value })}
+                className="w-full bg-black/50 border border-zinc-800 rounded-lg p-3 text-white focus:border-[#FF2D2D] outline-none transition-colors"
+              />
+              <input
+                required
+                placeholder="Video URL (YouTube)"
+                value={formData.videoUrl}
+                onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
+                className="w-full bg-black/50 border border-zinc-800 rounded-lg p-3 text-white focus:border-[#FF2D2D] outline-none transition-colors"
+              />
             </div>
           </div>
 
-          <button type="submit" className="w-full mt-4 bg-[#FF2D2D] text-white font-bold uppercase py-3 rounded-md hover:bg-[#FF2D2D]/90 transition-colors">
-            Add To Portfolio
+          <div>
+            <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2">Content</label>
+            <textarea
+              required
+              placeholder="Description"
+              value={formData.description}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
+              className="w-full bg-black/50 border border-zinc-800 rounded-lg p-3 text-white focus:border-[#FF2D2D] outline-none transition-colors h-24 resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2">Inference</label>
+            <textarea
+              required
+              placeholder="What was your inference?"
+              value={formData.inference}
+              onChange={e => setFormData({ ...formData, inference: e.target.value })}
+              className="w-full bg-black/50 border border-zinc-800 rounded-lg p-3 text-white focus:border-[#FF2D2D] outline-none transition-colors h-32 resize-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-[#FF2D2D] hover:bg-[#FF2D2D]/90 text-white font-bold py-4 rounded-xl uppercase tracking-widest transition-all hover:scale-[1.02]"
+          >
+            Add Assignment
           </button>
         </form>
       </div>
@@ -195,75 +194,79 @@ const AddProjectModal = ({
   );
 };
 
+const getYouTubeEmbedUrl = (url: string) => {
+  try {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+  } catch (e) {
+    return null;
+  }
+};
+
 const App: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch projects from JSON server
+  // Fetch assignments from JSON server
   useEffect(() => {
-    fetch('/api/projects')
+    fetch('/api/assignments')
       .then(res => res.json())
-      .then(data => setProjects(data))
-      .catch(err => console.error("Failed to load projects:", err));
+      .then(data => setAssignments(data))
+      .catch(err => console.error("Failed to load assignments:", err));
   }, []);
 
-  const handleAddProject = (newProject: Omit<Project, 'id'>) => {
-    const project = { ...newProject, id: Date.now().toString() };
+  const handleAddAssignment = (newAssignment: Omit<Assignment, 'id'>) => {
+    const assignment = { ...newAssignment, id: Date.now().toString() };
 
-    fetch('/api/projects', {
+    fetch('/api/assignments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(project)
+      body: JSON.stringify(assignment)
     })
       .then(res => res.json())
-      .then(savedProject => {
-        setProjects(prev => [savedProject, ...prev]);
+      .then(savedAssignment => {
+        setAssignments(prev => [savedAssignment, ...prev]);
       })
-      .catch(err => console.error("Failed to add project:", err));
+      .catch(err => console.error("Failed to add assignment:", err));
   };
 
-  const handleDeleteProject = (id: string, e: React.MouseEvent) => {
+  const handleDeleteAssignment = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Delete this project?')) {
-      fetch(`/api/projects/${id}`, { method: 'DELETE' })
+    if (window.confirm('Delete this assignment?')) {
+      fetch(`/api/assignments/${id}`, { method: 'DELETE' })
         .then(() => {
-          setProjects(prev => prev.filter(p => p.id !== id));
+          setAssignments(prev => prev.filter(p => p.id !== id));
         })
-        .catch(err => console.error("Failed to delete project:", err));
+        .catch(err => console.error("Failed to delete assignment:", err));
     }
   };
 
   return (
     <div className="relative min-h-screen selection:bg-[#FF2D2D] selection:text-white overflow-x-hidden">
-      <AddProjectModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddProject}
-      />
-      <BackgroundGeometry />
       <CustomCursor />
 
+      {/* Background */}
+      <BackgroundGeometry />
+
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-50 p-6 md:px-12 flex justify-between items-center backdrop-blur-md bg-black/50 border-b border-white/5">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-            <div className="w-2 h-2 bg-black rounded-full" />
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 pointer-events-none">
+        <div className="max-w-7xl mx-auto flex justify-between items-center bg-black/20 backdrop-blur-md rounded-full px-8 py-4 border border-white/5 pointer-events-auto">
+          <span className="text-xl font-bold doto-font uppercase tracking-tighter">SN.</span>
+          <div className="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest text-zinc-400">
+            <a href="#about" className="hover:text-[#FF2D2D] transition-colors">About</a>
+            <a href="#activities" className="hover:text-[#FF2D2D] transition-colors">Activities</a>
+            <a href="#academic" className="hover:text-[#FF2D2D] transition-colors">Academic</a>
+            <a href="#contact" className="hover:text-[#FF2D2D] transition-colors">Contact</a>
           </div>
-          <span className="heading-font font-bold tracking-tighter uppercase text-xl">Robotics</span>
-        </div>
-        <div className="hidden md:flex gap-8 mono-font text-xs uppercase tracking-widest">
-          <a href="#about" className="hover:text-[#FF2D2D] transition-colors">About</a>
-          <a href="#projects" className="hover:text-[#FF2D2D] transition-colors">Projects</a>
-          <a href="#academic" className="hover:text-[#FF2D2D] transition-colors">Academic</a>
-          <a href="#contact" className="hover:text-[#FF2D2D] transition-colors">Contact</a>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden sm:block">
-            <p className="text-[10px] text-zinc-500 doto-font uppercase">Shan Neeraj</p>
-            <p className="text-[10px] text-zinc-400 doto-font uppercase tracking-tighter">RA2311003012089</p>
-          </div>
-          <div className="w-8 h-8 border border-white/10 rounded-full flex items-center justify-center text-[10px] mono-font">
-            01
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <span className="block text-[10px] text-zinc-500 uppercase tracking-widest">Status</span>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="text-xs font-bold text-emerald-500">Available</span>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
@@ -271,22 +274,22 @@ const App: React.FC = () => {
       <main className="relative z-10 pt-24 px-6 md:px-12 max-w-7xl mx-auto space-y-32 pb-32 pointer-events-none">
 
         {/* HERO SECTION */}
-        <section id="hero" className="min-h-[85vh] flex flex-col justify-center border-b border-white/5 pb-20">
-          <div className="space-y-4 pointer-events-auto">
+        <section id="hero" className="min-h-[85vh] flex flex-col justify-center border-b border-white/5 pb-20 pointer-events-none">
+          <div className="space-y-4 pointer-events-none">
             <div className="flex items-center gap-2 text-[#FF2D2D] mono-font text-sm uppercase tracking-widest mb-6">
               <Activity className="w-4 h-4 animate-pulse" />
               <span>System Online: v2.5.0</span>
             </div>
-            <h1 className="text-6xl md:text-8xl font-bold doto-font leading-none tracking-tighter uppercase">
+            <h1 className="text-6xl md:text-8xl font-bold doto-font leading-none tracking-tighter uppercase pointer-events-none">
               Intro to <br />
               <span className="border-text">Robotics</span>
             </h1>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mt-12">
               <div className="max-w-xl">
-                <p className="text-xl md:text-2xl text-zinc-400 font-light leading-relaxed">
+                <p className="text-xl md:text-2xl text-zinc-400 font-light leading-relaxed pointer-events-none">
                   Exploring the synergy of <span className="text-white">Sensors</span>, <span className="text-white">Actuators</span>, and <span className="text-white">Control Systems</span> to build the next generation of automation.
                 </p>
-                <div className="mt-8 flex flex-wrap gap-4">
+                <div className="mt-8 flex flex-wrap gap-4 pointer-events-auto">
                   <div className="px-4 py-2 glass rounded-full flex items-center gap-2 text-lg doto-font">
                     <DotAccent />
                     STUDENT: SHAN NEERAJ
@@ -296,8 +299,8 @@ const App: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex gap-4">
-                <button className="interactive group relative overflow-hidden bg-white text-black px-8 py-4 rounded-full font-bold uppercase heading-font text-sm transition-all hover:pr-12">
+              <div className="flex gap-4 pointer-events-auto">
+                <button className="interactive group relative overflow-hidden bg-white text-black px-8 py-4 rounded-full font-bold uppercase heading-font text-sm transition-all hover:pr-12 pointer-events-auto">
                   Explore Concepts
                   <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all" />
                 </button>
@@ -343,6 +346,90 @@ const App: React.FC = () => {
           </div>
         </section>
 
+        {/* ACTIVITIES / ASSIGNMENTS SECTION */}
+        <AddAssignmentModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAdd={handleAddAssignment}
+        />
+
+        <section id="activities" className="scroll-mt-32">
+          <div className="flex justify-between items-end mb-12">
+            <SectionTitle title="Activities" subtitle="Assignments & Research" />
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="pointer-events-auto flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:border-[#FF2D2D]/50 transition-all group"
+            >
+              <Plus className="w-4 h-4 text-[#FF2D2D] group-hover:rotate-90 transition-transform" />
+              <span className="text-sm font-bold uppercase tracking-widest text-zinc-300">Add Assignment</span>
+            </button>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 pointer-events-auto">
+            {assignments.map((assignment, i) => {
+              const embedUrl = getYouTubeEmbedUrl(assignment.videoUrl);
+              return (
+                <NothingCard key={assignment.id} className="relative group flex flex-col h-full bg-zinc-900/50 border-zinc-800">
+                  {/* Delete Button */}
+                  <button
+                    onClick={(e) => handleDeleteAssignment(assignment.id, e)}
+                    className="absolute top-4 right-4 z-20 p-2 bg-black/80 text-white opacity-0 group-hover:opacity-100 hover:text-[#FF2D2D] transition-all rounded-full pointer-events-auto"
+                    title="Delete Assignment"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+
+                  {/* Video Embed */}
+                  <div className="w-full aspect-video bg-black rounded-xl overflow-hidden mb-6 border border-white/5 relative">
+                    {embedUrl ? (
+                      <iframe
+                        src={embedUrl}
+                        title={assignment.title}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-zinc-600">
+                        <span className="text-xs uppercase tracking-widest">No Video Available</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 flex flex-col space-y-4">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white mb-1 leading-tight doto-font uppercase">
+                        ASSIGNMENT {String(i + 1).padStart(2, '0')}
+                      </h3>
+                      <p className="text-sm text-[#FF2D2D] font-bold uppercase tracking-widest mb-4">{assignment.title}</p>
+
+                      <div className="p-3 bg-black/30 rounded-lg border border-white/5">
+                        <p className="text-sm text-zinc-400 leading-relaxed">{assignment.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex-1">
+                      <h4 className="text-xs font-bold text-[#FF2D2D] uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <DotAccent /> Inference
+                      </h4>
+                      <p className="text-sm text-zinc-500 leading-relaxed border-l-2 border-zinc-800 pl-4">
+                        {assignment.inference}
+                      </p>
+                    </div>
+                  </div>
+                </NothingCard>
+              );
+            })}
+
+            {assignments.length === 0 && (
+              <div className="col-span-full py-20 text-center border border-dashed border-zinc-800 rounded-2xl">
+                <p className="text-zinc-500 doto-font uppercase">No assignments added.</p>
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* CONCEPTS SECTION */}
         <section id="concepts" className="scroll-mt-32">
           <SectionTitle title="Core Concepts" subtitle="Foundational Robotics" />
@@ -368,53 +455,7 @@ const App: React.FC = () => {
         </section>
 
         {/* PROJECTS SECTION */}
-        <section id="projects" className="scroll-mt-32">
-          <div className="flex justify-between items-end mb-12">
-            <SectionTitle title="Featured Projects" subtitle="Prototyping Automation" />
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="pointer-events-auto flex items-center gap-2 px-6 py-3 border border-[#FF2D2D] text-[#FF2D2D] rounded-full hover:bg-[#FF2D2D] hover:text-white transition-all duration-300 group"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="text-xs font-bold doto-font uppercase tracking-widest">Add Project</span>
-            </button>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-8 pointer-events-auto">
-            {projects.map((project) => (
-              <NothingCard key={project.id} className="group cursor-pointer">
-                <div className="aspect-video bg-zinc-900 rounded-lg overflow-hidden mb-6 relative">
-                  <img src={project.image || "https://picsum.photos/seed/rob_default/800/600"} alt={project.title} className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
-                  <div className="absolute bottom-2 right-2 px-2 py-1 glass text-[10px] doto-font uppercase">
-                    Build v1.0
-                  </div>
-                  <button
-                    onClick={(e) => handleDeleteProject(project.id, e)}
-                    className="absolute top-2 right-2 p-2 bg-black/50 text-white opacity-0 group-hover:opacity-100 hover:text-[#FF2D2D] transition-all rounded-full"
-                    title="Delete Project"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-                <p className="text-[#FF2D2D] mono-font text-[10px] uppercase tracking-widest mb-1">{project.type}</p>
-                <h3 className="text-2xl font-bold doto-font uppercase mb-4">{project.title}</h3>
-                <div className="flex justify-between items-center pt-4 border-t border-white/5">
-                  <span className="text-xs text-zinc-500 uppercase">{project.tech}</span>
-                  <div className="flex gap-1">
-                    <div className="w-1 h-1 bg-[#FF2D2D] rounded-full" />
-                    <div className="w-1 h-1 bg-zinc-800 rounded-full" />
-                  </div>
-                </div>
-              </NothingCard>
-            ))}
-
-            {projects.length === 0 && (
-              <div className="col-span-full py-20 text-center border border-dashed border-zinc-800 rounded-2xl">
-                <p className="text-zinc-500 doto-font uppercase">No projects initialized. Add one to start.</p>
-              </div>
-            )}
-          </div>
-        </section>
 
         {/* ACADEMIC CONTENT SECTION */}
         <section id="academic" className="scroll-mt-32">
