@@ -87,6 +87,10 @@ const BackgroundGeometry = () => {
   return (
     <div className="fixed inset-0 z-0">
       <Spline scene="https://prod.spline.design/Loui2fRDebTE58VR/scene.splinecode" />
+      {/* Mask "Built with Spline" logo */}
+      <div className="absolute bottom-4 right-4 w-48 h-10 bg-black z-50 flex items-center justify-end px-4 pointer-events-auto cursor-default">
+        <span className="text-sm font-bold text-zinc-500 doto-font uppercase tracking-wider">Shan Neeraj</span>
+      </div>
     </div>
   );
 };
