@@ -107,92 +107,7 @@ interface Assignment {
   inference: string;
 }
 
-const AddAssignmentModal = ({
-  isOpen,
-  onClose,
-  onAdd
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  onAdd: (assignment: Omit<Assignment, 'id'>) => void;
-}) => {
-  const [formData, setFormData] = useState({ title: '', videoUrl: '', description: '', inference: '' });
 
-  if (!isOpen) return null;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAdd(formData);
-    setFormData({ title: '', videoUrl: '', description: '', inference: '' });
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto p-4">
-      <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
-        <h3 className="text-2xl font-bold doto-font uppercase mb-6 text-white">Add Assignment</h3>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2">Details</label>
-            <div className="grid grid-cols-1 gap-4">
-              <input
-                required
-                placeholder="Title"
-                value={formData.title}
-                onChange={e => setFormData({ ...formData, title: e.target.value })}
-                className="w-full bg-black/50 border border-zinc-800 rounded-lg p-3 text-white focus:border-[#FF2D2D] outline-none transition-colors"
-              />
-              <input
-                required
-                placeholder="Video URL (YouTube)"
-                value={formData.videoUrl}
-                onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
-                className="w-full bg-black/50 border border-zinc-800 rounded-lg p-3 text-white focus:border-[#FF2D2D] outline-none transition-colors"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2">Content</label>
-            <textarea
-              required
-              placeholder="Description"
-              value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
-              className="w-full bg-black/50 border border-zinc-800 rounded-lg p-3 text-white focus:border-[#FF2D2D] outline-none transition-colors h-24 resize-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2">Inference</label>
-            <textarea
-              required
-              placeholder="What was your inference?"
-              value={formData.inference}
-              onChange={e => setFormData({ ...formData, inference: e.target.value })}
-              className="w-full bg-black/50 border border-zinc-800 rounded-lg p-3 text-white focus:border-[#FF2D2D] outline-none transition-colors h-32 resize-none"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-[#FF2D2D] hover:bg-[#FF2D2D]/90 text-white font-bold py-4 rounded-xl uppercase tracking-widest transition-all hover:scale-[1.02]"
-          >
-            Add Assignment
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
 
 const getYouTubeEmbedUrl = (url: string) => {
   try {
@@ -205,42 +120,15 @@ const getYouTubeEmbedUrl = (url: string) => {
 };
 
 const App: React.FC = () => {
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Fetch assignments from JSON server
-  useEffect(() => {
-    fetch('/api/assignments')
-      .then(res => res.json())
-      .then(data => setAssignments(data))
-      .catch(err => console.error("Failed to load assignments:", err));
-  }, []);
-
-  const handleAddAssignment = (newAssignment: Omit<Assignment, 'id'>) => {
-    const assignment = { ...newAssignment, id: Date.now().toString() };
-
-    fetch('/api/assignments', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(assignment)
-    })
-      .then(res => res.json())
-      .then(savedAssignment => {
-        setAssignments(prev => [savedAssignment, ...prev]);
-      })
-      .catch(err => console.error("Failed to add assignment:", err));
-  };
-
-  const handleDeleteAssignment = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (window.confirm('Delete this assignment?')) {
-      fetch(`/api/assignments/${id}`, { method: 'DELETE' })
-        .then(() => {
-          setAssignments(prev => prev.filter(p => p.id !== id));
-        })
-        .catch(err => console.error("Failed to delete assignment:", err));
+  const assignments: Assignment[] = [
+    {
+      id: "1",
+      title: "Robotic Surgery ARM",
+      videoUrl: "https://youtu.be/ebg20r3D9OI",
+      description: "Robotic Surgery ARM",
+      inference: "MEDICAL ANIMATION TRANSCRIPT: Robotic surgery is a minimally invasive operation performed by surgeons manipulating robotic arms through several tiny incisions called ports. A robotic surgical machine consists of several main components including the console, where the surgeon sits while performing the operation, the patient-side cart with four interactive robotic arms and attached surgical instruments, and a high-definition 3D vision system. This system allows surgeons to make precise, controlled movements in your body with increased vision and dexterity. During robotic surgery, your surgeon will insert a high-definition 3D camera through one of the ports. The camera provides a magnified view of the surgical area. Then your surgeon will insert specialized surgical tools held by the remaining robotic arms through the other ports. Seated at the computer console, your surgeon will view the surgical area through a viewfinder and move the surgical tools and camera with joystick-like controls and foot pedals. Your surgeon's motions will generate computer input to guide the motion of the robot arms and surgical tools. Advantages of the system include controlled accurate movement of the surgical tools, prevention of unintentional hand shake or tremor, ability to operate in space is smaller than a human hand, enhanced visibility of the surgical area, and less patient blood loss and scarring."
     }
-  };
+  ];
 
   return (
     <div className="relative min-h-screen selection:bg-[#FF2D2D] selection:text-white overflow-x-hidden">
@@ -347,22 +235,12 @@ const App: React.FC = () => {
         </section>
 
         {/* ACTIVITIES / ASSIGNMENTS SECTION */}
-        <AddAssignmentModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onAdd={handleAddAssignment}
-        />
+
 
         <section id="activities" className="scroll-mt-32">
           <div className="flex justify-between items-end mb-12">
             <SectionTitle title="Activities" subtitle="Assignments & Research" />
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="pointer-events-auto flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:border-[#FF2D2D]/50 transition-all group"
-            >
-              <Plus className="w-4 h-4 text-[#FF2D2D] group-hover:rotate-90 transition-transform" />
-              <span className="text-sm font-bold uppercase tracking-widest text-zinc-300">Add Assignment</span>
-            </button>
+
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 pointer-events-auto">
@@ -371,13 +249,7 @@ const App: React.FC = () => {
               return (
                 <NothingCard key={assignment.id} className="relative group flex flex-col h-full bg-zinc-900/50 border-zinc-800">
                   {/* Delete Button */}
-                  <button
-                    onClick={(e) => handleDeleteAssignment(assignment.id, e)}
-                    className="absolute top-4 right-4 z-20 p-2 bg-black/80 text-white opacity-0 group-hover:opacity-100 hover:text-[#FF2D2D] transition-all rounded-full pointer-events-auto"
-                    title="Delete Assignment"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+
 
                   {/* Video Embed */}
                   <div className="w-full aspect-video bg-black rounded-xl overflow-hidden mb-6 border border-white/5 relative">
