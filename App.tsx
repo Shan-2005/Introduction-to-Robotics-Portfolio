@@ -188,10 +188,10 @@ const App: React.FC = () => {
                 </div>
               </div>
               <div className="flex gap-4 pointer-events-auto">
-                <button className="interactive group relative overflow-hidden bg-white text-black px-8 py-4 rounded-full font-bold uppercase heading-font text-sm transition-all hover:pr-12 pointer-events-auto">
-                  Explore Concepts
+                <a href="#activities" className="interactive group relative overflow-hidden bg-white text-black px-8 py-4 rounded-full font-bold uppercase heading-font text-sm transition-all hover:pr-12 pointer-events-auto">
+                  Explore Activities
                   <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all" />
-                </button>
+                </a>
               </div>
             </div>
           </div>
