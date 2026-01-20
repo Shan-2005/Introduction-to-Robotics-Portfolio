@@ -1,0 +1,25 @@
+{
+    "projects": [
+        {
+            "id": "1",
+            "title": "Line Follower",
+            "type": "AUTONOMOUS NAVIGATION",
+            "tech": "Arduino • IR Sensors",
+            "image": "https://picsum.photos/seed/rob1/800/600"
+        },
+        {
+            "id": "2",
+            "title": "Obstacle Avoidance",
+            "type": "ULTRASONIC MAPPING",
+            "tech": "Raspberry Pi • Servo • US",
+            "image": "https://picsum.photos/seed/rob2/800/600"
+        },
+        {
+            "id": "3",
+            "title": "Smart Home Bot",
+            "type": "IOT AUTOMATION",
+            "tech": "ESP32 • Python • MQTT",
+            "image": "https://picsum.photos/seed/rob3/800/600"
+        }
+    ]
+}

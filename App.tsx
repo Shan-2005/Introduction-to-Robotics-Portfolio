@@ -17,7 +17,8 @@ import {
   Plus,
   X,
   Upload,
-  Trash2
+  Trash2,
+  Mail
 } from 'lucide-react';
 import Spline from '@splinetool/react-spline';
 
@@ -88,8 +89,9 @@ const BackgroundGeometry = () => {
     <div className="fixed inset-0 z-0">
       <Spline scene="https://prod.spline.design/Loui2fRDebTE58VR/scene.splinecode" />
       {/* Mask "Built with Spline" logo */}
-      <div className="absolute bottom-4 right-4 w-48 h-10 bg-black z-50 flex items-center justify-end px-4 pointer-events-auto cursor-default">
-        <span className="text-sm font-bold text-zinc-500 doto-font uppercase tracking-wider">Shan Neeraj</span>
+      {/* Mask "Built with Spline" logo */}
+      <div className="absolute bottom-4 right-4 w-48 h-12 bg-black z-50 flex items-center justify-center px-4 pointer-events-auto cursor-default rounded-l-full border-l border-white/10">
+        <span className="text-sm font-bold text-zinc-200 doto-font uppercase tracking-widest">Shan Neeraj</span>
       </div>
     </div>
   );
@@ -104,30 +106,6 @@ interface Project {
   tech: string;
   image: string;
 }
-
-const DEFAULT_PROJECTS: Project[] = [
-  {
-    id: "1",
-    title: "Line Follower",
-    type: "AUTONOMOUS NAVIGATION",
-    tech: "Arduino • IR Sensors",
-    image: "https://picsum.photos/seed/rob1/800/600"
-  },
-  {
-    id: "2",
-    title: "Obstacle Avoidance",
-    type: "ULTRASONIC MAPPING",
-    tech: "Raspberry Pi • Servo • US",
-    image: "https://picsum.photos/seed/rob2/800/600"
-  },
-  {
-    id: "3",
-    title: "Smart Home Bot",
-    type: "IOT AUTOMATION",
-    tech: "ESP32 • Python • MQTT",
-    image: "https://picsum.photos/seed/rob3/800/600"
-  },
-];
 
 const AddProjectModal = ({
   isOpen,
@@ -218,32 +196,40 @@ const AddProjectModal = ({
 };
 
 const App: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>(() => {
-    // Try to load from local storage, else use default
-    try {
-      const saved = localStorage.getItem('robotics-portfolio-projects');
-      return saved ? JSON.parse(saved) : DEFAULT_PROJECTS;
-    } catch (e) {
-      console.error("Failed to load projects", e);
-      return DEFAULT_PROJECTS;
-    }
-  });
-
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fetch projects from JSON server
   useEffect(() => {
-    localStorage.setItem('robotics-portfolio-projects', JSON.stringify(projects));
-  }, [projects]);
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => setProjects(data))
+      .catch(err => console.error("Failed to load projects:", err));
+  }, []);
 
   const handleAddProject = (newProject: Omit<Project, 'id'>) => {
-    const project: Project = { ...newProject, id: Date.now().toString() };
-    setProjects(prev => [project, ...prev]);
+    const project = { ...newProject, id: Date.now().toString() };
+
+    fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(project)
+    })
+      .then(res => res.json())
+      .then(savedProject => {
+        setProjects(prev => [savedProject, ...prev]);
+      })
+      .catch(err => console.error("Failed to add project:", err));
   };
 
   const handleDeleteProject = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (window.confirm('Delete this project?')) {
-      setProjects(prev => prev.filter(p => p.id !== id));
+      fetch(`/api/projects/${id}`, { method: 'DELETE' })
+        .then(() => {
+          setProjects(prev => prev.filter(p => p.id !== id));
+        })
+        .catch(err => console.error("Failed to delete project:", err));
     }
   };
 
@@ -269,6 +255,7 @@ const App: React.FC = () => {
           <a href="#about" className="hover:text-[#FF2D2D] transition-colors">About</a>
           <a href="#projects" className="hover:text-[#FF2D2D] transition-colors">Projects</a>
           <a href="#academic" className="hover:text-[#FF2D2D] transition-colors">Academic</a>
+          <a href="#contact" className="hover:text-[#FF2D2D] transition-colors">Contact</a>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right hidden sm:block">
@@ -533,6 +520,29 @@ const App: React.FC = () => {
                 <span className="text-sm doto-font text-zinc-300 uppercase">{tool}</span>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* CONTACT SECTION */}
+        <section id="contact" className="scroll-mt-32 pointer-events-auto">
+          <SectionTitle title="Get In Touch" subtitle="Collaborate & Connect" />
+          <div className="glass p-12 rounded-2xl border border-white/5 text-center space-y-8">
+            <div className="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center mx-auto border border-zinc-800">
+              <Mail className="w-10 h-10 text-[#FF2D2D]" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold doto-font uppercase mb-2">Ready to Build?</h3>
+              <p className="text-zinc-500 max-w-lg mx-auto">
+                Open to research collaborations, robotics projects, and technical discussions.
+              </p>
+            </div>
+            <a
+              href="mailto:sn0760@srmist.edu.in"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-[#FF2D2D] text-white rounded-full font-bold uppercase tracking-widest hover:bg-[#FF2D2D]/90 transition-all hover:scale-105"
+            >
+              <Mail className="w-4 h-4" />
+              sn0760@srmist.edu.in
+            </a>
           </div>
         </section>
 
