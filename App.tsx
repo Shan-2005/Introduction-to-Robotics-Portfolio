@@ -1,20 +1,25 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Cpu, 
-  Settings, 
-  Zap, 
-  ChevronRight, 
-  Activity, 
-  Layers, 
-  Box, 
-  Terminal, 
+import {
+  Cpu,
+  Settings,
+  Zap,
+  ChevronRight,
+  Activity,
+  Layers,
+  Box,
+  Terminal,
   Calendar,
   FlaskConical,
   Waypoints,
   ArrowUpRight,
-  Circle
+  Circle,
+  Plus,
+  X,
+  Upload,
+  Trash2
 } from 'lucide-react';
+import Spline from '@splinetool/react-spline';
 
 // --- Custom Components ---
 
@@ -46,11 +51,11 @@ const CustomCursor = () => {
 
   return (
     <>
-      <div 
+      <div
         className="fixed top-0 left-0 w-8 h-8 pointer-events-none z-[9999] mix-blend-difference rounded-full border border-white transition-transform duration-100 ease-out"
         style={{ transform: `translate(${position.x - 16}px, ${position.y - 16}px) scale(${isHovering ? 1.5 : 1})` }}
       />
-      <div 
+      <div
         className="fixed top-0 left-0 w-1 h-1 bg-[#FF2D2D] rounded-full pointer-events-none z-[9999]"
         style={{ transform: `translate(${position.x - 2}px, ${position.y - 2}px)` }}
       />
@@ -72,7 +77,7 @@ const NothingCard = ({ children, className = "" }: { children?: React.ReactNode,
 );
 
 const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
-  <div className="mb-12 border-l border-[#FF2D2D] pl-6">
+  <div className="mb-12 border-l border-[#FF2D2D] pl-6 pointer-events-auto">
     <h2 className="text-4xl md:text-5xl font-bold doto-font uppercase tracking-tighter mb-2">{title}</h2>
     {subtitle && <p className="text-zinc-500 mono-font text-sm uppercase tracking-widest">{subtitle}</p>}
   </div>
@@ -80,38 +85,171 @@ const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string })
 
 const BackgroundGeometry = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
-      <div className="absolute inset-0 dotted-grid" />
-      <svg className="absolute w-full h-full opacity-20" viewBox="0 0 800 600">
-        <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        <circle cx="200" cy="200" r="100" stroke="#333" fill="none" strokeWidth="0.5">
-          <animate attributeName="r" values="80;120;80" dur="10s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="600" cy="400" r="150" stroke="#333" fill="none" strokeWidth="0.5">
-          <animate attributeName="r" values="130;170;130" dur="15s" repeatCount="indefinite" />
-        </circle>
-        <path d="M 0 300 Q 400 100 800 300" stroke="#333" fill="none" strokeWidth="0.5" strokeDasharray="5,5">
-          <animate attributeName="d" values="M 0 300 Q 400 100 800 300; M 0 300 Q 400 500 800 300; M 0 300 Q 400 100 800 300" dur="20s" repeatCount="indefinite" />
-        </path>
-      </svg>
-      <div className="absolute top-1/4 left-1/4 w-px h-64 bg-zinc-800 animate-pulse" />
-      <div className="absolute top-3/4 right-1/4 w-px h-64 bg-zinc-800 animate-pulse" />
-      <div className="absolute top-1/2 left-0 w-full h-px bg-zinc-900" />
+    <div className="fixed inset-0 z-0">
+      <Spline scene="https://prod.spline.design/Loui2fRDebTE58VR/scene.splinecode" />
+    </div>
+  );
+};
+
+// --- Dynamic Project Components ---
+
+interface Project {
+  id: string;
+  title: string;
+  type: string;
+  tech: string;
+  image: string;
+}
+
+const DEFAULT_PROJECTS: Project[] = [
+  {
+    id: "1",
+    title: "Line Follower",
+    type: "AUTONOMOUS NAVIGATION",
+    tech: "Arduino • IR Sensors",
+    image: "https://picsum.photos/seed/rob1/800/600"
+  },
+  {
+    id: "2",
+    title: "Obstacle Avoidance",
+    type: "ULTRASONIC MAPPING",
+    tech: "Raspberry Pi • Servo • US",
+    image: "https://picsum.photos/seed/rob2/800/600"
+  },
+  {
+    id: "3",
+    title: "Smart Home Bot",
+    type: "IOT AUTOMATION",
+    tech: "ESP32 • Python • MQTT",
+    image: "https://picsum.photos/seed/rob3/800/600"
+  },
+];
+
+const AddProjectModal = ({
+  isOpen,
+  onClose,
+  onAdd
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onAdd: (project: Omit<Project, 'id'>) => void;
+}) => {
+  const [formData, setFormData] = useState({ title: '', type: '', tech: '', image: '' });
+
+  if (!isOpen) return null;
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onAdd(formData);
+    setFormData({ title: '', type: '', tech: '', image: '' });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto">
+      <div className="bg-zinc-900 border border-white/10 p-8 rounded-2xl w-full max-w-md relative">
+        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-white">
+          <X className="w-5 h-5" />
+        </button>
+        <h3 className="text-xl font-bold doto-font uppercase mb-6 text-white">Add New Project</h3>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs mono-font uppercase text-zinc-500 mb-1">Project Title</label>
+            <input
+              required
+              className="w-full bg-black/50 border border-white/10 rounded-md p-2 text-white text-sm focus:border-[#FF2D2D] outline-none transition-colors"
+              value={formData.title}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs mono-font uppercase text-zinc-500 mb-1">Type / Category</label>
+            <input
+              required
+              className="w-full bg-black/50 border border-white/10 rounded-md p-2 text-white text-sm focus:border-[#FF2D2D] outline-none transition-colors"
+              value={formData.type}
+              onChange={e => setFormData({ ...formData, type: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs mono-font uppercase text-zinc-500 mb-1">Tech Stack</label>
+            <input
+              required
+              className="w-full bg-black/50 border border-white/10 rounded-md p-2 text-white text-sm focus:border-[#FF2D2D] outline-none transition-colors"
+              value={formData.tech}
+              onChange={e => setFormData({ ...formData, tech: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs mono-font uppercase text-zinc-500 mb-1">Project Image</label>
+            <div className="flex items-center gap-4">
+              <label className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-md hover:bg-white/10 transition-colors">
+                <Upload className="w-4 h-4 text-[#FF2D2D]" />
+                <span className="text-xs text-zinc-300">Upload Image</span>
+                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+              </label>
+              {formData.image && <span className="text-xs text-green-500">Image Loaded!</span>}
+            </div>
+          </div>
+
+          <button type="submit" className="w-full mt-4 bg-[#FF2D2D] text-white font-bold uppercase py-3 rounded-md hover:bg-[#FF2D2D]/90 transition-colors">
+            Add To Portfolio
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
 const App: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>(() => {
+    // Try to load from local storage, else use default
+    try {
+      const saved = localStorage.getItem('robotics-portfolio-projects');
+      return saved ? JSON.parse(saved) : DEFAULT_PROJECTS;
+    } catch (e) {
+      console.error("Failed to load projects", e);
+      return DEFAULT_PROJECTS;
+    }
+  });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('robotics-portfolio-projects', JSON.stringify(projects));
+  }, [projects]);
+
+  const handleAddProject = (newProject: Omit<Project, 'id'>) => {
+    const project: Project = { ...newProject, id: Date.now().toString() };
+    setProjects(prev => [project, ...prev]);
+  };
+
+  const handleDeleteProject = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm('Delete this project?')) {
+      setProjects(prev => prev.filter(p => p.id !== id));
+    }
+  };
+
   return (
     <div className="relative min-h-screen selection:bg-[#FF2D2D] selection:text-white overflow-x-hidden">
+      <AddProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={handleAddProject}
+      />
       <BackgroundGeometry />
       <CustomCursor />
 
@@ -139,16 +277,16 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      <main className="relative z-10 pt-24 px-6 md:px-12 max-w-7xl mx-auto space-y-32 pb-32">
-        
+      <main className="relative z-10 pt-24 px-6 md:px-12 max-w-7xl mx-auto space-y-32 pb-32 pointer-events-none">
+
         {/* HERO SECTION */}
         <section id="hero" className="min-h-[85vh] flex flex-col justify-center border-b border-white/5 pb-20">
-          <div className="space-y-4">
+          <div className="space-y-4 pointer-events-auto">
             <div className="flex items-center gap-2 text-[#FF2D2D] mono-font text-sm uppercase tracking-widest mb-6">
               <Activity className="w-4 h-4 animate-pulse" />
               <span>System Online: v2.5.0</span>
             </div>
-            <h1 className="text-7xl md:text-[9.5rem] font-bold doto-font leading-none tracking-tighter uppercase">
+            <h1 className="text-6xl md:text-8xl font-bold doto-font leading-none tracking-tighter uppercase">
               Intro to <br />
               <span className="border-text">Robotics</span>
             </h1>
@@ -158,11 +296,11 @@ const App: React.FC = () => {
                   Exploring the synergy of <span className="text-white">Sensors</span>, <span className="text-white">Actuators</span>, and <span className="text-white">Control Systems</span> to build the next generation of automation.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
-                  <div className="px-4 py-2 glass rounded-full flex items-center gap-2 text-xs doto-font">
+                  <div className="px-4 py-2 glass rounded-full flex items-center gap-2 text-lg doto-font">
                     <DotAccent />
                     STUDENT: SHAN NEERAJ
                   </div>
-                  <div className="px-4 py-2 border border-white/10 rounded-full flex items-center gap-2 text-xs doto-font">
+                  <div className="px-4 py-2 border border-white/10 rounded-full flex items-center gap-2 text-lg doto-font">
                     REG: RA2311003012089
                   </div>
                 </div>
@@ -179,7 +317,7 @@ const App: React.FC = () => {
 
         {/* ABOUT SECTION */}
         <section id="about" className="scroll-mt-32">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-12 items-center pointer-events-auto">
             <div>
               <SectionTitle title="The Maker" subtitle="Profile & Vision" />
               <div className="space-y-6 text-zinc-400 text-lg leading-relaxed">
@@ -217,7 +355,7 @@ const App: React.FC = () => {
         {/* CONCEPTS SECTION */}
         <section id="concepts" className="scroll-mt-32">
           <SectionTitle title="Core Concepts" subtitle="Foundational Robotics" />
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-4 gap-6 pointer-events-auto">
             {[
               { title: "Sensors", desc: "Ultrasonic, PIR, Temperature & Light sensors for environment perception.", icon: Activity },
               { title: "Actuators", desc: "Servo, DC, and Stepper motors for precise mechanical movement.", icon: Settings },
@@ -240,34 +378,32 @@ const App: React.FC = () => {
 
         {/* PROJECTS SECTION */}
         <section id="projects" className="scroll-mt-32">
-          <SectionTitle title="Featured Projects" subtitle="Prototyping Automation" />
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { 
-                title: "Line Follower", 
-                type: "AUTONOMOUS NAVIGATION", 
-                tech: "Arduino • IR Sensors",
-                img: "https://picsum.photos/seed/rob1/800/600"
-              },
-              { 
-                title: "Obstacle Avoidance", 
-                type: "ULTRASONIC MAPPING", 
-                tech: "Raspberry Pi • Servo • US",
-                img: "https://picsum.photos/seed/rob2/800/600"
-              },
-              { 
-                title: "Smart Home Bot", 
-                type: "IOT AUTOMATION", 
-                tech: "ESP32 • Python • MQTT",
-                img: "https://picsum.photos/seed/rob3/800/600"
-              },
-            ].map((project, idx) => (
-              <NothingCard key={idx} className="group cursor-pointer">
+          <div className="flex justify-between items-end mb-12">
+            <SectionTitle title="Featured Projects" subtitle="Prototyping Automation" />
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="pointer-events-auto flex items-center gap-2 px-6 py-3 border border-[#FF2D2D] text-[#FF2D2D] rounded-full hover:bg-[#FF2D2D] hover:text-white transition-all duration-300 group"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="text-xs font-bold doto-font uppercase tracking-widest">Add Project</span>
+            </button>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 pointer-events-auto">
+            {projects.map((project) => (
+              <NothingCard key={project.id} className="group cursor-pointer">
                 <div className="aspect-video bg-zinc-900 rounded-lg overflow-hidden mb-6 relative">
-                  <img src={project.img} alt={project.title} className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                  <img src={project.image || "https://picsum.photos/seed/rob_default/800/600"} alt={project.title} className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                   <div className="absolute bottom-2 right-2 px-2 py-1 glass text-[10px] doto-font uppercase">
                     Build v1.0
                   </div>
+                  <button
+                    onClick={(e) => handleDeleteProject(project.id, e)}
+                    className="absolute top-2 right-2 p-2 bg-black/50 text-white opacity-0 group-hover:opacity-100 hover:text-[#FF2D2D] transition-all rounded-full"
+                    title="Delete Project"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
                 <p className="text-[#FF2D2D] mono-font text-[10px] uppercase tracking-widest mb-1">{project.type}</p>
                 <h3 className="text-2xl font-bold doto-font uppercase mb-4">{project.title}</h3>
@@ -280,14 +416,20 @@ const App: React.FC = () => {
                 </div>
               </NothingCard>
             ))}
+
+            {projects.length === 0 && (
+              <div className="col-span-full py-20 text-center border border-dashed border-zinc-800 rounded-2xl">
+                <p className="text-zinc-500 doto-font uppercase">No projects initialized. Add one to start.</p>
+              </div>
+            )}
           </div>
         </section>
 
         {/* ACADEMIC CONTENT SECTION */}
         <section id="academic" className="scroll-mt-32">
           <SectionTitle title="Academic Roadmap" subtitle="Curriculum & Progress" />
-          
-          <div className="grid md:grid-cols-2 gap-12">
+
+          <div className="grid md:grid-cols-2 gap-12 pointer-events-auto">
             <div className="space-y-12">
               <div>
                 <h4 className="flex items-center gap-2 doto-font text-sm uppercase text-white mb-6">
@@ -356,7 +498,7 @@ const App: React.FC = () => {
         {/* WORK IN PROGRESS SECTION */}
         <section id="wip" className="scroll-mt-32">
           <SectionTitle title="Lab Bench Status" subtitle="System Diagnostic" />
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 pointer-events-auto">
             <div className="glass p-8 rounded-2xl border-dashed border-zinc-700 flex flex-col items-center justify-center text-center space-y-4">
               <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-800 animate-pulse">
                 <Box className="w-8 h-8 text-zinc-600" />
@@ -381,7 +523,7 @@ const App: React.FC = () => {
         {/* TOOLS & TECH */}
         <section id="tools" className="scroll-mt-32">
           <SectionTitle title="Toolbox" subtitle="Technology Stack" />
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 pointer-events-auto">
             {["Arduino", "C / C++", "Python", "Fusion 360", "MATLAB", "ROS2", "OpenCV", "Embedded C"].map((tool, i) => (
               <div key={i} className="px-6 py-3 border border-white/5 rounded-full hover:border-[#FF2D2D]/50 hover:bg-white/5 transition-all cursor-default">
                 <span className="text-sm doto-font text-zinc-300 uppercase">{tool}</span>
