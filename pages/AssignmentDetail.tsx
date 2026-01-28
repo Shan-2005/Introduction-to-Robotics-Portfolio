@@ -105,9 +105,23 @@ const AssignmentDetail = () => {
                             <div>
                                 <span className="block text-[10px] text-zinc-600 uppercase mb-1">Source</span>
                                 <span className="text-[#FF2D2D] font-bold text-xs uppercase cursor-pointer hover:underline truncate block">
-                                    {assignment.videoUrl}
+                                    {assignment.videoUrl || "Pending Upload"}
                                 </span>
                             </div>
+
+                            {assignment.technicalSpecs && (
+                                <div className="pt-6 border-t border-white/5">
+                                    <h4 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Specs</h4>
+                                    <ul className="space-y-2">
+                                        {assignment.technicalSpecs.map((spec, i) => (
+                                            <li key={i} className="text-xs text-zinc-400 mono-font flex items-start gap-2">
+                                                <span className="text-[#FF2D2D] mt-0.5">›</span>
+                                                {spec}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </div>
 
