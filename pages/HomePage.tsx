@@ -165,16 +165,16 @@ const HomePage = () => {
                             </h4>
                             <div className="space-y-4">
                                 {[
-                                    { name: "Inverse Kinematics Quiz", status: "IN PROGRESS", date: "Oct 24" },
-                                    { name: "Actuator Selection Lab", status: "NOT STARTED", date: "Oct 28" },
-                                    { name: "Final Bot Assembly", status: "LOCKED", date: "Nov 15" }
+                                    { name: "Inverse Kinematics Analysis", status: "DONE", date: "Jan 28" },
+                                    { name: "Actuator & Gripper Setup", status: "DONE", date: "Jan 28" },
+                                    { name: "Path Planning Algorithm", status: "IN PROGRESS", date: "Feb 05" }
                                 ].map((task, i) => (
                                     <div key={i} className="flex items-center justify-between p-4 border border-white/5 rounded-xl hover:bg-white/5 transition-colors">
                                         <div>
                                             <p className="font-bold uppercase doto-font text-sm tracking-tight">{task.name}</p>
                                             <p className="text-[10px] text-zinc-500 mono-font">{task.date}</p>
                                         </div>
-                                        <span className={`text-[10px] mono-font px-2 py-1 rounded-sm ${task.status === 'IN PROGRESS' ? 'bg-[#FF2D2D]/20 text-[#FF2D2D]' : 'bg-zinc-800 text-zinc-400'}`}>
+                                        <span className={`text-[10px] mono-font px-2 py-1 rounded-sm ${task.status === 'IN PROGRESS' ? 'bg-[#FF2D2D]/20 text-[#FF2D2D]' : task.status === 'DONE' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-zinc-800 text-zinc-400'}`}>
                                             {task.status}
                                         </span>
                                     </div>
@@ -207,8 +207,8 @@ const HomePage = () => {
                         </h4>
                         {[
                             { phase: "PHASE 01", title: "Introduction & Sensing", desc: "Completed basics of electronics and signal processing.", active: false },
-                            { phase: "PHASE 02", title: "Actuation & Control", desc: "Currently exploring PID loops and motor control drivers.", active: true },
-                            { phase: "PHASE 03", title: "AI & Perception", desc: "Integration of computer vision and basic neural nets.", active: false },
+                            { phase: "PHASE 02", title: "Actuation & Control", desc: "Completed PID loops and motor control drivers.", active: false },
+                            { phase: "PHASE 03", title: "AI & Perception", desc: "Currently integrating computer vision and basic neural nets.", active: true },
                             { phase: "PHASE 04", title: "Final Prototype", desc: "Modular multi-terrain exploration unit build.", active: false }
                         ].map((step, i) => (
                             <div key={i} className="relative">
