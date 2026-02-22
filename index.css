@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* Base Reset & Global Styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    cursor: none;
+    overflow-x: hidden;
+    background-color: #000;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font Classes */
+.heading-font {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.mono-font {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.doto-font {
+    font-family: 'Doto', sans-serif;
+    font-variation-settings: "ROND" 100;
+}
+
+/* Utility Classes */
+.dotted-grid {
+    background-image: radial-gradient(circle, #333 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Glass Effect */
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Border Text */
+.border-text {
+    -webkit-text-stroke: 1px white;
+    color: transparent;
+}
+
+/* Selection Color */
+::selection {
+    background: #FF2D2D;
+    color: white;
+}
