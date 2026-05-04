@@ -3,6 +3,7 @@ import { Activity, ChevronRight, Cpu, Mail, Calendar, FlaskConical, Waypoints, B
 import { Link } from 'react-router-dom';
 import { assignments } from '../data/assignments';
 import { DotAccent, NothingCard, SectionTitle, getYouTubeEmbedUrl, VideoPlayer } from '../components/UI';
+import { ProjectSection } from '../components/ProjectSection';
 
 const HomePage = () => {
     return (
@@ -80,6 +81,9 @@ const HomePage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* PROJECT SECTION */}
+            <ProjectSection />
 
             {/* ACTIVITIES SECTION */}
             <section id="activities" className="scroll-mt-32">
