@@ -13,7 +13,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
     {/* Navigation */}
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 pointer-events-none">
       <div className="max-w-7xl mx-auto flex justify-between items-center bg-black/20 backdrop-blur-md rounded-full px-8 py-4 border border-white/5 pointer-events-auto">
-        <Link to="/" className="text-xl font-bold doto-font uppercase tracking-tighter hover:text-white transition-colors">SN.</Link>
+        <Link to="/" className="text-xl font-bold doto-font uppercase tracking-tighter hover:text-[#FF2D2D] transition-colors flex items-center gap-0.5">
+          SN<span className="text-[#FF2D2D]">+</span>
+        </Link>
         <div className="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest text-zinc-400">
           <a href="/#about" className="hover:text-[#FF2D2D] transition-colors">About</a>
           <a href="/#project" className="hover:text-[#FF2D2D] transition-colors">Project</a>
