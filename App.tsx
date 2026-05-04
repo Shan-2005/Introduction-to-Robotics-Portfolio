@@ -16,6 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
         <Link to="/" className="text-xl font-bold doto-font uppercase tracking-tighter hover:text-white transition-colors">SN.</Link>
         <div className="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest text-zinc-400">
           <a href="/#about" className="hover:text-[#FF2D2D] transition-colors">About</a>
+          <a href="/#project" className="hover:text-[#FF2D2D] transition-colors">Project</a>
           <a href="/#activities" className="hover:text-[#FF2D2D] transition-colors">Activities</a>
           <a href="/#academic" className="hover:text-[#FF2D2D] transition-colors">Academic</a>
           <a href="/#contact" className="hover:text-[#FF2D2D] transition-colors">Contact</a>
